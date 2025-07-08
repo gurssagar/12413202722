@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
-const { log } = require('../shared/logging');
+const { log } = require('./shared/logging');
 const loggingMiddleware = require('./middlewares/loggingMiddleware');
 const app = express();
 const PORT = process.env.PORT || 3001;

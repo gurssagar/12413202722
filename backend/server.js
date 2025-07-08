@@ -1,35 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
-const { log } = require('../testapp-frontend/shared/logging');
+const { log } = require('../shared/logging');
+const loggingMiddleware = require('./middlewares/loggingMiddleware');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Logging middleware
-app.use(async (req, res, next) => {
-  const start = Date.now();
-  
-  res.on('finish', async () => {
-    try {
-      const duration = Date.now() - start;
-      await log(
-        'backend',
-        res.statusCode >= 500 ? 'error' :
-        res.statusCode >= 400 ? 'warn' : 'info',
-        req.path.split('/')[1] || 'root',
-        `${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`
-      );
-    } catch (err) {
-      console.error('Logging middleware error:', err);
-    }
-  });
-
-  next();
-});
+app.use(loggingMiddleware);
 
 // In-memory storage (replace with database in production)
 const urlDatabase = new Map();
